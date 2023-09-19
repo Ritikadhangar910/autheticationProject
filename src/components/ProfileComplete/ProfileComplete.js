@@ -7,7 +7,6 @@ function ProfileComplete() {
   const [name, setname] = useState("");
   const [url, seturl] = useState("");
   const createcontext = useContext(CreateContext);
-
   function ProfileCompleteFun(e) {
     e.preventDefault();
     if (name.length > 0 && url.length > 0) {
@@ -48,7 +47,9 @@ function ProfileComplete() {
             <Form.Control
               type="text"
               placeholder="Enter name"
-              value={name}
+              value={
+                createcontext.name !== undefined ? createcontext.name : name
+              }
               onChange={(e) => {
                 setname(e.target.value);
               }}
@@ -60,7 +61,11 @@ function ProfileComplete() {
             <Form.Control
               type="url"
               placeholder="Enter url"
-              value={url}
+              value={
+                createcontext.photourl !== undefined
+                  ? createcontext.photourl
+                  : url
+              }
               onChange={(e) => {
                 seturl(e.target.value);
               }}

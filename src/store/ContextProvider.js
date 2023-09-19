@@ -1,13 +1,88 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateContext from "./create-context";
 const ContextProvider = (props) => {
-  const [token, setToken] = useState("");
-  function setTokenHandler(token) {
-    setToken(token);
+  function getItemsFromLocalstorage() {
+    let items = localStorage.getItem("token");
+    if (!items) return;
+    else {
+      items = JSON.parse(items);
+      return items;
+    }
   }
+  function getToken() {
+    let itemToken = getItemsFromLocalstorage();
+    if (!itemToken) {
+      return "";
+    } else {
+      return itemToken.token;
+    }
+  }
+  function getEmail() {
+    let itemToken = getItemsFromLocalstorage();
+    if (!itemToken) {
+      return "";
+    } else {
+      return itemToken.email;
+    }
+  }
+  const [token, setToken] = useState(getToken);
+  const [email, setemail] = useState(getEmail);
+  const [name, setname] = useState("");
+  const [photourl, setphotourl] = useState("");
+  const isLoggedIn = !!token;
+
+  function setTokenHandler(tok, mail) {
+    setToken(tok);
+    setemail(mail);
+    const obj = {
+      token: tok,
+      email: mail,
+    };
+    localStorage.setItem("token", JSON.stringify(obj));
+  }
+  function setTokenoutHandler() {
+    localStorage.removeItem("token");
+  }
+  useEffect(() => {
+    async function getProfileApi() {
+      try {
+        const response = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDobfUCPDIraKRAx9neLhvCx2BR1c76nSI",
+          {
+            method: "POST",
+            body: JSON.stringify({ idToken: token }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setname(data.users[0].displayName);
+          setphotourl(data.users[0].photoUrl);
+        } else {
+          const errorData = await response.json();
+          console.log("Error response:", errorData);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      }
+    }
+
+    if (token !== "") {
+      getProfileApi();
+    }
+  }, [token]);
+
   const createcontext = {
     token: token,
+    isLoggedIn: isLoggedIn,
+    name: name,
+    email: email,
+    photourl: photourl,
     setToken: setTokenHandler,
+    setTokenout: setTokenoutHandler,
   };
   return (
     <CreateContext.Provider value={createcontext}>

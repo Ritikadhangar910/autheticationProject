@@ -43,8 +43,8 @@ function Signup() {
       let data = await response.json();
       console.log(data);
       setsignuperr(false);
-      createcontext.setToken(data.idToken);
-      navigate("/home");
+      createcontext.setToken(data.idToken, data.email);
+      navigate("/");
     } else {
       let data = await response.json();
       console.log(data);

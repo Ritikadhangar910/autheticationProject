@@ -2,14 +2,25 @@ import Home from "./components/Home/Home";
 import Signup from "./components/Signup/Signup";
 import ProfileComplete from "./components/ProfileComplete/ProfileComplete";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import NavbarFun from "./components/Navbar/Navbar";
+import { useContext } from "react";
+import CreateContext from "./store/create-context";
 function App() {
+  const createcontext = useContext(CreateContext);
+  let isLoggedIn = createcontext.isLoggedIn;
   return (
     <>
       <BrowserRouter>
+        <NavbarFun />
         <Routes>
-          <Route path="/" element={<Signup />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/profile" element={<ProfileComplete />} />
+          {isLoggedIn ? (
+            <>
+              <Route path="/" element={<Home />} />
+              <Route path="/profile" element={<ProfileComplete />} />
+            </>
+          ) : (
+            <Route path="/login" element={<Signup />} />
+          )}
         </Routes>
       </BrowserRouter>
     </>
