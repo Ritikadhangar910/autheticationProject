@@ -4,11 +4,13 @@ import Navbar from "react-bootstrap/Navbar";
 import Button from "react-bootstrap/Button";
 import { useContext } from "react";
 import CreateContext from "../../store/create-context";
-
+import { useNavigate } from "react-router-dom";
 function NavbarFun() {
   const createcontext = useContext(CreateContext);
+  const navigate = useNavigate();
   function logoutFun() {
     createcontext.setTokenout();
+    navigate("/login");
   }
   return (
     <Navbar expand="lg" className="bg-body-tertiary">

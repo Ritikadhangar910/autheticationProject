@@ -42,6 +42,7 @@ const ContextProvider = (props) => {
   }
   function setTokenoutHandler() {
     localStorage.removeItem("token");
+    setToken(null);
   }
   useEffect(() => {
     async function getProfileApi() {
