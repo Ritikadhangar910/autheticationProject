@@ -71,7 +71,7 @@ const ContextProvider = (props) => {
       }
     }
 
-    if (token !== "") {
+    if (isLoggedIn) {
       getProfileApi();
     }
   }, [token]);

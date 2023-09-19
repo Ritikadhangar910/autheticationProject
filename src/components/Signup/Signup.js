@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import classes from "./Signup.module.css";
 import Alert from "react-bootstrap/Alert";
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CreateContext from "../../store/create-context";
 function Signup() {
   const [email, setemail] = useState("");
@@ -82,7 +82,9 @@ function Signup() {
       {err && <Alert variant="danger">Write password correctly</Alert>}
       {Emptyerr && <Alert variant="danger">Write details correctly</Alert>}
       {signuperr && <Alert variant="danger">{signupmsg}</Alert>}
-      <h2 className={classes.heading}>SignUp Form</h2>
+      <h2 className={classes.heading}>
+        {!loggin ? "SignUp Form" : "loggin Form"}
+      </h2>
       <div className={classes.flexItems}>
         <Form className={classes.form} onSubmit={formSummit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -126,6 +128,9 @@ function Signup() {
             </Button>
           )}
         </Form>
+        <div className="mt-4">
+          {loggin ? <Link to={"/forgotpassword"}>forgot password</Link> : null}
+        </div>
         <div className="mt-4">
           <Button variant="primary" type="submit" onClick={chagneLogginFun}>
             {loggin

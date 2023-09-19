@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavbarFun from "./components/Navbar/Navbar";
 import { useContext } from "react";
 import CreateContext from "./store/create-context";
+import ForgetPassword from "./components/ForgetPassword/ForgetPassword";
 function App() {
   const createcontext = useContext(CreateContext);
   let isLoggedIn = createcontext.isLoggedIn;
@@ -19,7 +20,10 @@ function App() {
               <Route path="/profile" element={<ProfileComplete />} />
             </>
           ) : (
-            <Route path="/login" element={<Signup />} />
+            <>
+              <Route path="/login" element={<Signup />} />
+              <Route path="/forgotpassword" element={<ForgetPassword />} />
+            </>
           )}
         </Routes>
       </BrowserRouter>
