@@ -3,36 +3,45 @@ import Form from "react-bootstrap/Form";
 import classes from "./Signup.module.css";
 import Alert from "react-bootstrap/Alert";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 function Signup() {
   const [email, setemail] = useState("");
   const [password, setpass] = useState("");
   const [confirmpass, setconfirmpass] = useState("");
+  const [loggin, setLoggin] = useState(false);
   const [err, seterr] = useState(false);
   const [Emptyerr, setEmptyerr] = useState(false);
   const [signuperr, setsignuperr] = useState(false);
   const [signupmsg, setsignupmsg] = useState("");
   const [loading, setloading] = useState(false);
+  const navigate = useNavigate();
   async function signupInFirebase() {
     setloading(true);
-    let response = await fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDobfUCPDIraKRAx9neLhvCx2BR1c76nSI",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          returnSecureToken: true,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    let authlink;
+    if (!loggin) {
+      authlink =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDobfUCPDIraKRAx9neLhvCx2BR1c76nSI";
+    } else {
+      authlink =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDobfUCPDIraKRAx9neLhvCx2BR1c76nSI";
+    }
+    let response = await fetch(authlink, {
+      method: "POST",
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        returnSecureToken: true,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     setloading(false);
     if (response.ok) {
       let data = await response.json();
       console.log(data);
       setsignuperr(false);
+      navigate("/home");
     } else {
       let data = await response.json();
       console.log(data);
@@ -59,6 +68,11 @@ function Signup() {
     if (!err && !Emptyerr) {
       signupInFirebase();
     }
+  }
+  function chagneLogginFun() {
+    setLoggin((prev) => {
+      return !prev;
+    });
   }
   return (
     <>
@@ -109,6 +123,13 @@ function Signup() {
             </Button>
           )}
         </Form>
+        <div className="mt-4">
+          <Button variant="primary" type="submit" onClick={chagneLogginFun}>
+            {loggin
+              ? "Don't you have account? sign up "
+              : "Have an account? Login"}
+          </Button>
+        </div>
       </div>
     </>
   );
