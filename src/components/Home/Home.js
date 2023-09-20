@@ -4,9 +4,17 @@ import { useContext, useState } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import CreateContext from "../../store/create-context";
+import Form from "react-bootstrap/Form";
+import classes from "./Home.module.css";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 import axios from "axios";
 const Home = () => {
   const [err, seterr] = useState(false);
+  const [spend, setspend] = useState("");
+  const [description, setdescription] = useState("");
+  const [catogary, setcatogary] = useState("");
+  const [data, storedata] = useState([]);
   const navigate = useNavigate();
   const createcontext = useContext(CreateContext);
   function profileComplete() {
@@ -37,25 +45,88 @@ const Home = () => {
       console.error("Error:", error);
     }
   }
+  function FormSummitHandler(e) {
+    e.preventDefault();
+    const obj = { spend, description, catogary };
+    storedata((prev) => {
+      return [...prev, obj];
+    });
+  }
   return (
     <>
       {err && <Alert variant="success">User is Varified now</Alert>}
-      <div className="m-3">
-        <h2>Welcome to Expense Trancer</h2>
-        <p>
-          your profile is{" "}
-          {createcontext.name !== undefined ? "complete" : " incomplete"}
-        </p>
-        <Button variant="primary" type="submit" onClick={profileComplete}>
-          Complete Profile
-        </Button>
-        <div className="mt-5">
-          <h3>Verify Email: </h3>
+      <div className={classes.itemside}>
+        <div className="mt-2">
+          <p>
+            your profile is
+            {createcontext.name !== undefined ? "complete" : " incomplete"}
+          </p>
+          <Button variant="primary" type="submit" onClick={profileComplete}>
+            Complete Profile
+          </Button>
+        </div>
+        <div className="mt-2">
+          <h3>Verify Email here </h3>
           <Button variant="primary" type="submit" onClick={verifyEmailfun}>
             Verify Email
           </Button>
         </div>
       </div>
+      <h2 className={classes.heading}>Welcome to Expense Trancer</h2>
+
+      <div className={classes.items}>
+        <Form className={classes.itemForm} onSubmit={FormSummitHandler}>
+          <Form.Group className="mb-3" controlId="MoneySpend">
+            <Form.Label>Money Spend</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter spend money"
+              value={spend}
+              onChange={(e) => {
+                setspend(e.target.value);
+              }}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="Enterdescription">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter description"
+              value={description}
+              onChange={(e) => {
+                setdescription(e.target.value);
+              }}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="ExpenseCategory">
+            <Form.Label>Choose Expense Category</Form.Label>
+            <DropdownButton
+              id="dropdown-basic-button"
+              title={catogary || "Select Category"}
+              onSelect={(eventKey) => {
+                setcatogary(eventKey);
+              }}
+              value={catogary}
+            >
+              <Dropdown.Item eventKey="Food">Food</Dropdown.Item>
+              <Dropdown.Item eventKey="Petrol">Petrol</Dropdown.Item>
+              <Dropdown.Item eventKey="Salary">Salary</Dropdown.Item>
+            </DropdownButton>
+          </Form.Group>
+          <Button variant="primary" type="submit" className={classes.summitbtn}>
+            Submit
+          </Button>
+        </Form>
+        <h2>Your Expence</h2>
+      </div>
+      {data.map((item) => (
+        <div key={item.description}>
+          <p>Money: {item.spend}</p>
+          <p>Description: {item.description}</p>
+          <p>Catogary:{item.catogary}</p>
+        </div>
+      ))}
     </>
   );
 };
