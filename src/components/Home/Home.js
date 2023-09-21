@@ -14,7 +14,6 @@ const Home = () => {
   const [spend, setspend] = useState("");
   const [description, setdescription] = useState("");
   const [catogary, setcatogary] = useState("");
-  const [data, storedata] = useState([]);
   const navigate = useNavigate();
   const createcontext = useContext(CreateContext);
   function profileComplete() {
@@ -47,10 +46,7 @@ const Home = () => {
   }
   function FormSummitHandler(e) {
     e.preventDefault();
-    const obj = { spend, description, catogary };
-    storedata((prev) => {
-      return [...prev, obj];
-    });
+    createcontext.addExpnse(spend, description, catogary);
   }
   return (
     <>
@@ -120,8 +116,8 @@ const Home = () => {
         </Form>
         <h2>Your Expence</h2>
       </div>
-      {data.map((item) => (
-        <div key={item.description}>
+      {createcontext.expensedata.map((item) => (
+        <div key={item.id}>
           <p>Money: {item.spend}</p>
           <p>Description: {item.description}</p>
           <p>Catogary:{item.catogary}</p>
