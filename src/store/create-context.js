@@ -4,6 +4,8 @@ const CreateContext = React.createContext({
   isLoggedIn: false,
   expensedata: [],
   addExpnse: (item) => {},
+  deleteExpense: (id) => {},
+  editExpense: (items) => {},
   email: "",
   name: "",
   photourl: "",
