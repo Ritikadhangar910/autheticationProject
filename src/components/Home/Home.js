@@ -1,31 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Alert from "react-bootstrap/Alert";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
-import CreateContext from "../../store/create-context";
+// import CreateContext from "../../store/create-context";
 import Form from "react-bootstrap/Form";
 import classes from "./Home.module.css";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  getallExpense,
+  addExpense,
+  deleteExpense,
+  editExpense,
+} from "../../ReduxStore/Expensedata";
 const Home = () => {
   const [err, seterr] = useState(false);
   const [spend, setspend] = useState("");
   const [description, setdescription] = useState("");
   const [catogary, setcatogary] = useState("");
+  const token = useSelector((state) => state.auth.token);
+  const data = useSelector((state) => state.expensedata.data);
+  console.log(data, "data");
   const navigate = useNavigate();
-  const createcontext = useContext(CreateContext);
+  const dispatch = useDispatch();
+  // const createcontext = useContext(CreateContext);
   function profileComplete() {
     navigate("/profile");
   }
+  useEffect(() => {
+    dispatch(getallExpense());
+  }, [dispatch]);
   async function verifyEmailfun() {
     try {
       const response = await axios.post(
         "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDobfUCPDIraKRAx9neLhvCx2BR1c76nSI",
         {
           requestType: "VERIFY_EMAIL",
-          idToken: createcontext.token,
+          idToken: token,
         },
         {
           headers: {
@@ -46,7 +60,8 @@ const Home = () => {
   }
   function FormSummitHandler(e) {
     e.preventDefault();
-    createcontext.addExpnse(spend, description, catogary);
+    // createcontext.addExpnse(spend, description, catogary);
+    dispatch(addExpense({ spend, description, catogary }));
   }
   function itemshowonForm(item) {
     setspend(item.spend);
@@ -58,10 +73,7 @@ const Home = () => {
       {err && <Alert variant="success">User is Varified now</Alert>}
       <div className={classes.itemside}>
         <div className="mt-2">
-          <p>
-            your profile is
-            {createcontext.name !== undefined ? "complete" : " incomplete"}
-          </p>
+          <p>your profile is incomplete</p>
           <Button variant="primary" type="submit" onClick={profileComplete}>
             Complete Profile
           </Button>
@@ -122,15 +134,21 @@ const Home = () => {
 
         <h2>Your Expence</h2>
       </div>
-      {createcontext.expensedata.map((item) => (
+      {data.map((item) => (
         <div key={item.id} className="m-2">
           <p>Money: {item.spend}</p>
           <p>Description: {item.description}</p>
           <p>Catogary:{item.catogary}</p>
+          {item.spend > 10000 ? (
+            <Button variant="warning" className="m-2">
+              Active Premium Button
+            </Button>
+          ) : null}
           <Button
             variant="danger"
             onClick={() => {
-              createcontext.deleteExpense(item.id);
+              // createcontext.deleteExpense(item.id);
+              dispatch(deleteExpense(item.id));
             }}
             className="m-2"
           >
@@ -143,12 +161,14 @@ const Home = () => {
             }}
             className="m-2"
           >
-            Edit
+            ItemShowonForm
           </Button>
           <Button
             variant="success"
             onClick={() => {
-              createcontext.editExpense(spend, description, catogary, item.id);
+              // createcontext.editExpense(spend, description, catogary, item.id);
+              let id = item.id;
+              dispatch(editExpense({ spend, description, catogary, id }));
             }}
             className="m-2"
           >

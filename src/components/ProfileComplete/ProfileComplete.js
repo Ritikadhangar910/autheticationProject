@@ -1,12 +1,14 @@
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import classes from "./ProfileComplete.module.css";
-import { useContext, useState } from "react";
-import CreateContext from "../../store/create-context";
+import { useState } from "react";
+// import CreateContext from "../../store/create-context";
+import { useSelector } from "react-redux";
 function ProfileComplete() {
   const [name, setname] = useState("");
   const [url, seturl] = useState("");
-  const createcontext = useContext(CreateContext);
+  const token = useSelector((state) => state.auth.token);
+  // const createcontext = useContext(CreateContext);
   function ProfileCompleteFun(e) {
     e.preventDefault();
     if (name.length > 0 && url.length > 0) {
@@ -19,7 +21,7 @@ function ProfileComplete() {
       {
         method: "POST",
         body: JSON.stringify({
-          idToken: createcontext.token,
+          idToken: token,
           displayName: name,
           photoUrl: url,
           returnSecureToken: false,
@@ -47,9 +49,7 @@ function ProfileComplete() {
             <Form.Control
               type="text"
               placeholder="Enter name"
-              value={
-                createcontext.name !== undefined ? createcontext.name : name
-              }
+              value={name}
               onChange={(e) => {
                 setname(e.target.value);
               }}
@@ -61,11 +61,7 @@ function ProfileComplete() {
             <Form.Control
               type="url"
               placeholder="Enter url"
-              value={
-                createcontext.photourl !== undefined
-                  ? createcontext.photourl
-                  : url
-              }
+              value={url}
               onChange={(e) => {
                 seturl(e.target.value);
               }}

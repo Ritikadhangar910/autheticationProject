@@ -2,9 +2,11 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import classes from "./Signup.module.css";
 import Alert from "react-bootstrap/Alert";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import CreateContext from "../../store/create-context";
+// import CreateContext from "../../store/create-context";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../ReduxStore/Auth";
 function Signup() {
   const [email, setemail] = useState("");
   const [password, setpass] = useState("");
@@ -16,7 +18,9 @@ function Signup() {
   const [signupmsg, setsignupmsg] = useState("");
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
-  const createcontext = useContext(CreateContext);
+  const dispatch = useDispatch();
+
+  // const createcontext = useContext(CreateContext);
   async function signupInFirebase() {
     setloading(true);
     let authlink;
@@ -43,7 +47,8 @@ function Signup() {
       let data = await response.json();
       console.log(data);
       setsignuperr(false);
-      createcontext.setToken(data.idToken, data.email);
+      // createcontext.setToken(data.idToken, data.email);
+      dispatch(authActions.login({ token: data.idToken, email: data.email }));
       navigate("/");
     } else {
       let data = await response.json();
