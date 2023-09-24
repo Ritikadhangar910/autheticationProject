@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-const initialAuthState = {
+const initialexpenseState = {
   data: [],
 };
 
 const expensedataSlice = createSlice({
   name: "expensedata",
-  initialState: initialAuthState,
+  initialState: initialexpenseState,
   reducers: {
     manipulateData(state, action) {
       //   state.data.push(action.payload);
@@ -71,30 +71,14 @@ export function editExpense({ spend, description, catogary, id }) {
       const copyexpensedata = [...state.expensedata.data];
 
       const expenseIndex = copyexpensedata.findIndex((val) => val.id === id);
-
-      // Make a copy of the expense object
       const updatedExpense = { ...copyexpensedata[expenseIndex] };
-
-      // Update the properties of the copied expense
       updatedExpense.spend = spend;
       updatedExpense.description = description;
       updatedExpense.catogary = catogary;
 
-      // Update the copy of the data array
       copyexpensedata[expenseIndex] = updatedExpense;
 
       dispatch(expensedataActions.manipulateData(copyexpensedata));
-      //   const state = getState();
-      //   let copyexpensedata = [...state.expensedata.data];
-
-      //   let expenseIndex = copyexpensedata.findIndex((val) => {
-      //     return val.id === id;
-      //   });
-
-      //   copyexpensedata[expenseIndex].spend = spend;
-      //   copyexpensedata[expenseIndex].description = description;
-      //   copyexpensedata[expenseIndex].catogary = catogary;
-      //   dispatch(expensedataActions.manipulateData(copyexpensedata));
 
       const response = await axios.put(
         `https://expensetracer-292c2-default-rtdb.firebaseio.com/expense/${id}.json`,
